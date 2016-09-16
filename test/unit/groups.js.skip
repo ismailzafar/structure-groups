@@ -1,0 +1,284 @@
+import GroupsController from '../../../src/controllers/groups'
+import UsersController  from '../../../src/controllers/users'
+import OrganizationsController from '../../../src/controllers/organizations'
+
+
+/** @test {GroupsController} */
+describe('Groups', function() {
+
+  /** @test {GroupsController#create} */
+  it('should create an group', async function(done) {
+
+    var group = new GroupsController(),
+    organization = new OrganizationsController()
+
+    var req0 = {
+      body: {
+        title: 'My Organization'
+      }
+    }
+
+    var org = await organization.create(req0)
+
+    var req = {
+      body: {
+        title: 'Marvolo Team',
+        organizationId: org.id
+      }
+    }
+
+    var res = await group.create(req)
+
+    expect(res.title).to.equal('Marvolo Team')
+
+    done()
+
+  })
+
+  /** @test {GroupsController#getById} */
+  it('should get by a group by ID', async function(done) {
+
+    var group = new GroupsController()
+
+    var req = {
+      body: {
+        title: 'Marvolo Team2'
+      }
+    }
+
+    var res = await group.create(req)
+
+    var req2 = {
+      params: {
+        id: res.id
+      }
+    }
+
+    try {
+      var res2 = await group.getById(req2)
+
+      expect(res2.title).to.equal('Marvolo Team2')
+
+      done()
+    }
+    catch(e) {
+      console.error('E', e)
+    }
+
+  })
+
+  /** @test {GroupsController#getAll} */
+  it('should get all groups', async function(done) {
+
+    var group = new GroupsController({
+    })
+
+    var req = {
+      body: {
+        title: 'Marvolo Team3'
+      }
+    }
+
+    var res = await group.create(req)
+
+    var res2 = await group.getAll()
+
+    expect(res2.length > 0).to.be.true
+
+    done()
+
+  })
+
+  /** @test {GroupsController#update} */
+  it('should update a group', async function(done) {
+
+    var group = new GroupsController()
+
+    var req = {
+      body: {
+        title: 'Marvolo Team4'
+      }
+    }
+
+    var res = await group.create(req)
+
+    var req = {
+      body: {
+        title: 'Marvolo Team5'
+      },
+      params: {
+        id: res.id
+      }
+    }
+
+    var res2 = await group.updateById(req)
+
+    expect(res2.title).to.equal('Marvolo Team5')
+
+    done()
+
+  })
+
+  /** @test {GroupsController#addUser} */
+  it('should add a group member', async function(done) {
+
+    const group = new GroupsController()
+    const user  = new UsersController()
+
+    const req0 = {
+      body: {
+        title: 'Marvolo Team2'
+      }
+    }
+
+    const res0 = await group.create(req0)
+
+    const req1 = {
+      body: {
+        username: 'malfoy1',
+        email: 'malfoy1@riddler.com',
+        password: 'cryb4by'
+      }
+    }
+
+    const res1 = await user.create(req1)
+
+    const req2 = {
+      params: {
+        id: res0.id,
+        userId: res1.id
+      }
+    }
+
+    const res2 = await group.addUser(req2)
+
+    const req3 = {
+      params: {
+        id: res0.id
+      }
+    }
+
+    const res3 = await group.getById(req2)
+
+    expect(res3.id).to.equal(res0.id)
+    expect(res3.title).to.equal('Marvolo Team2')
+    expect(res3.leaders.length).to.equal(0)
+    expect(res3.members[0].id).to.equal(res1.id)
+
+    done()
+
+  })
+
+  /** @test {GroupsController#addUser} */
+  it('should add a group leader', async function(done) {
+
+    const group = new GroupsController()
+    const user  = new UsersController()
+
+    const req0 = {
+      body: {
+        title: 'Marvolo Team3'
+      }
+    }
+
+    const res0 = await group.create(req0)
+
+    const req1 = {
+      body: {
+        username: 'lucius1',
+        email: 'lucius1@riddler.com',
+        password: 'b4dh41rd4y'
+      }
+    }
+
+    const res1 = await user.create(req1)
+
+    const req2 = {
+      body: {
+        leader: true
+      },
+      params: {
+        id: res0.id,
+        userId: res1.id
+      }
+    }
+
+    const res2 = await group.addUser(req2)
+
+    const req3 = {
+      params: {
+        id: res0.id
+      }
+    }
+
+    const res3 = await group.getById(req2)
+
+    expect(res3.id).to.equal(res0.id)
+    expect(res3.title).to.equal('Marvolo Team3')
+    expect(res3.members.length).to.equal(0)
+    expect(res3.leaders[0].id).to.equal(res1.id)
+
+    done()
+
+  })
+
+  /** @test {GroupsController#removeUser} */
+  it('should remove a group member', async function(done) {
+
+    const group = new GroupsController()
+    const user  = new UsersController()
+
+    const req0 = {
+      body: {
+        title: 'Marvolo Team4'
+      }
+    }
+
+    const res0 = await group.create(req0)
+
+    const req1 = {
+      body: {
+        username: 'malfoy4',
+        email: 'malfoy4@riddler.com',
+        password: 'cryb4by4'
+      }
+    }
+
+    const res1 = await user.create(req1)
+
+    const req2 = {
+      params: {
+        id: res0.id,
+        userId: res1.id
+      }
+    }
+
+    const res2 = await group.addUser(req2)
+
+    const req3 = {
+      params: {
+        id: res0.id,
+        userId: res1.id
+      }
+    }
+
+    const res3 = await group.removeUser(req3)
+
+    const req4 = {
+      params: {
+        id: res0.id
+      }
+    }
+
+    const res4 = await group.getById(req4)
+
+    expect(res4.id).to.equal(res0.id)
+    expect(res4.title).to.equal('Marvolo Team4')
+    expect(res4.leaders.length).to.equal(0)
+    expect(res4.members.length).to.equal(0)
+
+    done()
+
+  })
+
+})
