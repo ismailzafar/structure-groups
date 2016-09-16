@@ -1,6 +1,6 @@
 {
   "name": "structure-groups",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "User groups, cause people like to be together.",
   "main": "dist/index.js",
   "dependencies": {

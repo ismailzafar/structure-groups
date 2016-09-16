@@ -78,7 +78,7 @@ export default function modelInterface(RootModel) {
      *
      * @param {Object} pkg - The options
      */
-    getUsers() {
+    getUsers(id) {
 
       return new Promise( async (resolve, reject) => {
 
