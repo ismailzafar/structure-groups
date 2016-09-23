@@ -1,26 +1,22 @@
+import Controller from './controllers/group'
 import Dispatcher from 'structure-dispatcher'
 
+const controller = new Controller()
 const dispatch = new Dispatcher().dispatch
 const express  = require('express')
 const routes   = express.Router()
 
-export default function routeInterface(props = {}) {
+routes.post(`/:id/add/:userId`,    dispatch(controller, 'addUser'))
+routes.post(`/:id/remove/:userId`, dispatch(controller, 'removeUser'))
 
-  const controller = new props.Controller()
+routes.get(`/:id/users`,           dispatch(controller, 'getUsers'))
+routes.get(`/:id`,                 dispatch(controller, 'getById'))
+routes.get(`/`,                    dispatch(controller, 'getAll'))
 
-  routes.post(`/:id/add/:userId`,    dispatch(controller, 'addUser'))
-  routes.post(`/:id/remove/:userId`, dispatch(controller, 'removeUser'))
+routes.patch(`/:id`,               dispatch(controller, 'updateById'))
 
-  routes.get(`/:id/users`,           dispatch(controller, 'getUsers'))
-  routes.get(`/:id`,                 dispatch(controller, 'getById'))
-  routes.get(`/`,                    dispatch(controller, 'getAll'))
+routes.post(`/`,                   dispatch(controller, 'create'))
 
-  routes.patch(`/:id`,               dispatch(controller, 'updateById'))
+routes.delete(`/:id`,              dispatch(controller, 'deleteById'))
 
-  routes.post(`/`,                   dispatch(controller, 'create'))
-
-  routes.delete(`/:id`,              dispatch(controller, 'deleteById'))
-
-  return routes
-
-}
+export default routes

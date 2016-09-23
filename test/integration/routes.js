@@ -1,11 +1,31 @@
-import MockHTTPServer from '../../helpers/mock-http-server'
+import migrationItems from '../../src/migrations'
+import Migrations from 'structure-migrations'
+import MockHTTPServer from '../helpers/mock-http-server'
+import r from '../helpers/driver'
+
+Migrations.prototype.r = r
 
 describe('Groups', function() {
+
+  beforeEach(function() {
+
+    this.migration = new Migrations({
+      db: 'test',
+      items: migrationItems
+    })
+
+    return this.migration.process()
+
+  })
+
+  afterEach(function() {
+    return this.migration.purge()
+  })
 
   it('should create an group', async function(done) {
 
     var res = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/groups`)
+      .post(`/api/${process.env.API_VERSION}/groups`)
       .send({
         title: 'Marvolo All-Star Team 1'
       })
@@ -22,13 +42,13 @@ describe('Groups', function() {
   it('should get by a group by Id', async function(done) {
 
     var res = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/groups`)
+      .post(`/api/${process.env.API_VERSION}/groups`)
       .send({
         title: 'Marvolo All-Star Team 2'
       })
 
     var res2 = await new MockHTTPServer()
-      .get(`/api/v${process.env.API_VERSION}/groups/${res.body.pkg.id}`)
+      .get(`/api/${process.env.API_VERSION}/groups/${res.body.pkg.id}`)
 
     const group = res2.body.pkg
 
@@ -42,13 +62,13 @@ describe('Groups', function() {
   it('should get all groups', async function(done) {
 
     var res = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/groups`)
+      .post(`/api/${process.env.API_VERSION}/groups`)
       .send({
         title: 'Marvolo All-Star Team 3'
       })
 
     var res2 = await new MockHTTPServer()
-      .get(`/api/v${process.env.API_VERSION}/groups`)
+      .get(`/api/${process.env.API_VERSION}/groups`)
 
     const groups = res2.body.pkg.groups
 
@@ -61,13 +81,13 @@ describe('Groups', function() {
   it('should update a group', async function(done) {
 
     var res = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/groups`)
+      .post(`/api/${process.env.API_VERSION}/groups`)
       .send({
         title: 'Marvolo All-Star Team 4'
       })
 
     var res2 = await new MockHTTPServer()
-      .patch(`/api/v${process.env.API_VERSION}/groups/${res.body.pkg.id}`)
+      .patch(`/api/${process.env.API_VERSION}/groups/${res.body.pkg.id}`)
       .send({
         title: 'Marvolo All-Star Team 5'
       })
@@ -83,7 +103,7 @@ describe('Groups', function() {
   it('should add a group member', async function(done) {
 
     var res = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/groups`)
+      .post(`/api/${process.env.API_VERSION}/groups`)
       .send({
         title: 'Marvolo All-Star Team 6'
       })
@@ -91,7 +111,7 @@ describe('Groups', function() {
     let group = res.body.pkg
 
     var res0 = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/users`)
+      .post(`/api/${process.env.API_VERSION}/users`)
       .send({
         username: 'dobby1',
         email: 'dobby1@riddler.com',
@@ -101,11 +121,11 @@ describe('Groups', function() {
     const user = res0.body.pkg
 
     var res1 = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/groups/${group.id}/add/${user.id}`)
+      .post(`/api/${process.env.API_VERSION}/groups/${group.id}/add/${user.id}`)
       .send()
 
     var res2 = await new MockHTTPServer()
-      .get(`/api/v${process.env.API_VERSION}/groups/${group.id}`)
+      .get(`/api/${process.env.API_VERSION}/groups/${group.id}`)
 
     group = res2.body.pkg
 
@@ -120,7 +140,7 @@ describe('Groups', function() {
   it('should add a group leader', async function(done) {
 
     var res = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/groups`)
+      .post(`/api/${process.env.API_VERSION}/groups`)
       .send({
         title: 'Marvolo All-Star Team 7'
       })
@@ -128,7 +148,7 @@ describe('Groups', function() {
     let group = res.body.pkg
 
     var res0 = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/users`)
+      .post(`/api/${process.env.API_VERSION}/users`)
       .send({
         username: 'dobby2',
         email: 'dobby2@riddler.com',
@@ -138,13 +158,13 @@ describe('Groups', function() {
     const user = res0.body.pkg
 
     var res1 = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/groups/${group.id}/add/${user.id}`)
+      .post(`/api/${process.env.API_VERSION}/groups/${group.id}/add/${user.id}`)
       .send({
         leader: true
       })
 
     var res2 = await new MockHTTPServer()
-      .get(`/api/v${process.env.API_VERSION}/groups/${group.id}`)
+      .get(`/api/${process.env.API_VERSION}/groups/${group.id}`)
 
     group = res2.body.pkg
 
@@ -159,7 +179,7 @@ describe('Groups', function() {
   it('should remove a group member', async function(done) {
 
     var res = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/groups`)
+      .post(`/api/${process.env.API_VERSION}/groups`)
       .send({
         title: 'Marvolo All-Star Team 8'
       })
@@ -167,7 +187,7 @@ describe('Groups', function() {
     let group = res.body.pkg
 
     var res0 = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/users`)
+      .post(`/api/${process.env.API_VERSION}/users`)
       .send({
         username: 'dobby1',
         email: 'dobby1@riddler.com',
@@ -177,15 +197,15 @@ describe('Groups', function() {
     const user = res0.body.pkg
 
     var res1 = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/groups/${group.id}/add/${user.id}`)
+      .post(`/api/${process.env.API_VERSION}/groups/${group.id}/add/${user.id}`)
       .send()
 
     var res2 = await new MockHTTPServer()
-      .post(`/api/v${process.env.API_VERSION}/groups/${group.id}/remove/${user.id}`)
+      .post(`/api/${process.env.API_VERSION}/groups/${group.id}/remove/${user.id}`)
       .send()
 
     var res3 = await new MockHTTPServer()
-      .get(`/api/v${process.env.API_VERSION}/groups/${group.id}`)
+      .get(`/api/${process.env.API_VERSION}/groups/${group.id}`)
 
     group = res3.body.pkg
 
