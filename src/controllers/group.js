@@ -115,6 +115,36 @@ export default class GroupsController extends RootController {
   }
 
   /**
+   * Get leaders in a group
+   *
+   * @public
+   * @param {Object} req - Express req
+   * @param {Object} res - Express res
+   */
+  getLeaders(req, res) {
+
+    const group = new GroupModel()
+
+    return group.getLeaders(req.params.id)
+
+  }
+
+  /**
+   * Get members in a group
+   *
+   * @public
+   * @param {Object} req - Express req
+   * @param {Object} res - Express res
+   */
+  getMembers(req, res) {
+
+    const group = new GroupModel()
+
+    return group.getMembers(req.params.id)
+
+  }
+
+  /**
    * Get users in a group
    *
    * @public

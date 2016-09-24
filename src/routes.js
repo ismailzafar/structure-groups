@@ -9,6 +9,8 @@ const routes   = express.Router()
 routes.post(`/:id/add/:userId`,    dispatch(controller, 'addUser'))
 routes.post(`/:id/remove/:userId`, dispatch(controller, 'removeUser'))
 
+routes.get(`/:id/leaders`,         dispatch(controller, 'getLeaders'))
+routes.get(`/:id/members`,         dispatch(controller, 'getMembers'))
 routes.get(`/:id/users`,           dispatch(controller, 'getUsers'))
 routes.get(`/:id`,                 dispatch(controller, 'getById'))
 routes.get(`/`,                    dispatch(controller, 'getAll'))

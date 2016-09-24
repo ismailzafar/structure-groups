@@ -1,6 +1,6 @@
 {
   "name": "structure-groups",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "User groups, cause people like to be together.",
   "main": "dist/index.js",
   "dependencies": {
@@ -37,13 +37,17 @@
     "structure-router": "0.0.3",
     "structure-server": "0.0.6",
     "structure-test-helpers": "0.0.3",
+    "structure-users": "0.0.3",
     "supertest": "^2.0.0",
     "supertest-as-promised": "^4.0.0"
   },
   "scripts": {
     "compile": "node_modules/.bin/babel src -d dist -D -s",
     "prepublish": "npm run compile",
-    "test": "gulp t"
+    "start-reqlite": "node_modules/forever/bin/forever start node_modules/reqlite/lib/node.js --port-offset 1 -s",
+    "stop-reqlite": "node_modules/forever/bin/forever stop node_modules/reqlite/lib/node.js --port-offset 1 -s",
+    "test": "export NODE_ENV=test && gulp stop-reqlite && npm run start-reqlite && gulp t && gulp stop-reqlite",
+    "test:debug": "export LOG_LEVEL=debug && npm test"
   },
   "repository": {
     "type": "git",

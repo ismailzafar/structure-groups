@@ -73,10 +73,124 @@ export default class GroupModel extends RootModel {
 
  }
 
+ /**
+  * Get leaders of a group
+  *
+  * @param {String} id
+  */
+ getLeaders(id) {
+
+   return new Promise( async (resolve, reject) => {
+
+     let data  = null
+     let group = null
+
+     const initGroupData = {
+       leaders: []
+     }
+
+     try {
+
+       data = await this.r
+         .table('groups')
+         .getAll(id)
+         .eqJoin('id', this.r.table('link_groups_users'), {index: 'groupId'})
+         .eqJoin(this.r.row('right')('userId'), this.r.table('users'), {index: 'id'})
+
+       // The group has no members
+       if(!data || data.length == 0) {
+         // Prevent next for loop from running
+         data = {
+           length: 0
+         }
+
+         group = Object.assign({}, await RootModel.prototype.getById.call(this, id), initGroupData)
+       }
+     }
+     catch(e) {
+       return reject(e)
+     }
+
+     for(let i = 0, l = data.length; i < l; i++) {
+       const item = data[i]
+       const leader = item.left.right.leader
+       const user = item.right
+
+       if(!group) group = Object.assign({}, item.left.left, initGroupData)
+
+       if(leader) {
+         group.leaders.push(user)
+       }
+
+     }
+
+     resolve(group)
+
+   })
+
+ }
+
+ /**
+  * Get members of a group
+  *
+  * @param {String} id
+  */
+ getMembers(id) {
+
+   return new Promise( async (resolve, reject) => {
+
+     let data  = null
+     let group = null
+
+     const initGroupData = {
+       members: []
+     }
+
+     try {
+
+       data = await this.r
+         .table('groups')
+         .getAll(id)
+         .eqJoin('id', this.r.table('link_groups_users'), {index: 'groupId'})
+         .eqJoin(this.r.row('right')('userId'), this.r.table('users'), {index: 'id'})
+
+       // The group has no members
+       if(!data || data.length == 0) {
+         // Prevent next for loop from running
+         data = {
+           length: 0
+         }
+
+         group = Object.assign({}, await RootModel.prototype.getById.call(this, id), initGroupData)
+       }
+     }
+     catch(e) {
+       return reject(e)
+     }
+
+     for(let i = 0, l = data.length; i < l; i++) {
+       const item = data[i]
+       const leader = item.left.right.leader
+       const user = item.right
+
+       if(!group) group = Object.assign({}, item.left.left, initGroupData)
+
+       if(!leader) {
+         group.members.push(user)
+       }
+
+     }
+
+     resolve(group)
+
+   })
+
+ }
+
   /**
-   * Reference a user to a group
+   * Get users of a group
    *
-   * @param {Object} pkg - The options
+   * @param {String} id
    */
   getUsers(id) {
 

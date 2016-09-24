@@ -2,6 +2,7 @@ import migrationItems from '../../src/migrations'
 import Migrations from 'structure-migrations'
 import MockHTTPServer from '../helpers/mock-http-server'
 import r from '../helpers/driver'
+import {migrations as userMigrations} from 'structure-users'
 
 Migrations.prototype.r = r
 
@@ -11,7 +12,9 @@ describe('Groups', function() {
 
     this.migration = new Migrations({
       db: 'test',
-      items: migrationItems
+      items: {
+        tables: migrationItems.tables.concat(userMigrations.tables)
+      }
     })
 
     return this.migration.process()
@@ -22,7 +25,7 @@ describe('Groups', function() {
     return this.migration.purge()
   })
 
-  it('should create an group', async function(done) {
+  it('should create an group', async function() {
 
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
@@ -35,11 +38,9 @@ describe('Groups', function() {
     expect(res.body.status).to.equal(201)
     expect(group.title).to.equal('Marvolo All-Star Team 1')
 
-    done()
-
   })
 
-  it('should get by a group by Id', async function(done) {
+  it('should get by a group by Id', async function() {
 
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
@@ -55,11 +56,9 @@ describe('Groups', function() {
     expect(res2.body.status).to.equal(200)
     expect(group.title).to.equal('Marvolo All-Star Team 2')
 
-    done()
-
   })
 
-  it('should get all groups', async function(done) {
+  it('should get all groups', async function() {
 
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
@@ -74,11 +73,9 @@ describe('Groups', function() {
 
     expect(groups.length > 0).to.be.true
 
-    done()
-
   })
 
-  it('should update a group', async function(done) {
+  it('should update a group', async function() {
 
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
@@ -96,11 +93,9 @@ describe('Groups', function() {
 
     expect(group.title).to.equal('Marvolo All-Star Team 5')
 
-    done()
-
   })
 
-  it('should add a group member', async function(done) {
+  it('should add a group member', async function() {
 
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
@@ -125,19 +120,16 @@ describe('Groups', function() {
       .send()
 
     var res2 = await new MockHTTPServer()
-      .get(`/api/${process.env.API_VERSION}/groups/${group.id}`)
+      .get(`/api/${process.env.API_VERSION}/groups/${group.id}/members`)
 
     group = res2.body.pkg
 
     expect(group.title).to.equal('Marvolo All-Star Team 6')
-    expect(group.leaders.length).to.equal(0)
     expect(group.members[0].id).to.equal(user.id)
-
-    done()
 
   })
 
-  it('should add a group leader', async function(done) {
+  it('should add a group leader', async function() {
 
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
@@ -164,19 +156,16 @@ describe('Groups', function() {
       })
 
     var res2 = await new MockHTTPServer()
-      .get(`/api/${process.env.API_VERSION}/groups/${group.id}`)
+      .get(`/api/${process.env.API_VERSION}/groups/${group.id}/leaders`)
 
     group = res2.body.pkg
 
     expect(group.title).to.equal('Marvolo All-Star Team 7')
-    expect(group.members.length).to.equal(0)
     expect(group.leaders[0].id).to.equal(user.id)
-
-    done()
 
   })
 
-  it('should remove a group member', async function(done) {
+  it('should remove a group member', async function() {
 
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
@@ -205,16 +194,12 @@ describe('Groups', function() {
       .send()
 
     var res3 = await new MockHTTPServer()
-      .get(`/api/${process.env.API_VERSION}/groups/${group.id}`)
+      .get(`/api/${process.env.API_VERSION}/groups/${group.id}/users`)
 
     group = res3.body.pkg
 
     expect(group.title).to.equal('Marvolo All-Star Team 8')
-    expect(group.leaders.length).to.equal(0)
-    expect(group.members.length).to.equal(0)
     expect(group.users.length).to.equal(0)
-
-    done()
 
   })
 
