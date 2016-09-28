@@ -3,11 +3,9 @@ import migrations from './migrations'
 import Model from './models/group'
 import routes from './routes'
 
-export default function pluginInterface(props = {}) {
+export default function pluginInterface(options = {}) {
 
-  return {
-    routes
-  }
+  return routes(options)
 
 }
 
@@ -21,10 +19,9 @@ const resources = {
 }
 
 const settings = {
-  pluginName: 'groups',
-  routeName: 'groups'
+  migrations,
+  pluginName: 'groups'
 }
 
-export {migrations}
 export {resources}
 export {settings}

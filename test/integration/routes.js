@@ -2,7 +2,7 @@ import migrationItems from '../../src/migrations'
 import Migrations from 'structure-migrations'
 import MockHTTPServer from '../helpers/mock-http-server'
 import r from '../helpers/driver'
-import {migrations as userMigrations} from 'structure-users'
+import {settings as userSettings} from 'structure-users'
 
 Migrations.prototype.r = r
 
@@ -13,7 +13,7 @@ describe('Groups', function() {
     this.migration = new Migrations({
       db: 'test',
       items: {
-        tables: migrationItems.tables.concat(userMigrations.tables)
+        tables: migrationItems.tables.concat(userSettings.migrations.tables)
       }
     })
 
@@ -112,7 +112,7 @@ describe('Groups', function() {
         email: 'dobby1@riddler.com',
         password: '0lds0cks'
       })
-
+    console.error('')
     const user = res0.body.pkg
 
     var res1 = await new MockHTTPServer()

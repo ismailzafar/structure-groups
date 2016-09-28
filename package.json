@@ -1,6 +1,6 @@
 {
   "name": "structure-groups",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "User groups, cause people like to be together.",
   "main": "dist/index.js",
   "dependencies": {
@@ -31,13 +31,13 @@
     "sinon": "^1.17.5",
     "sinon-chai": "^2.8.0",
     "structure-migrations": "0.0.4",
-    "structure-plugins": "0.0.13",
+    "structure-plugins": "0.0.15",
     "structure-root-controller": "0.0.3",
     "structure-root-model": "0.0.3",
     "structure-router": "0.0.3",
     "structure-server": "0.0.6",
     "structure-test-helpers": "0.0.3",
-    "structure-users": "0.0.3",
+    "structure-users": "0.0.4",
     "supertest": "^2.0.0",
     "supertest-as-promised": "^4.0.0"
   },
