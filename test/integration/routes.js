@@ -234,4 +234,41 @@ describe('Groups', function() {
 
   })
 
+  it.only('should remove a user from a group when deleting a group', async function() {
+
+    var res = await new MockHTTPServer()
+      .post(`/api/${process.env.API_VERSION}/groups`)
+      .send({
+        title: 'Marvolo All-Star Team 8'
+      })
+
+    const group = res.body.pkg
+
+    var res0 = await new MockHTTPServer()
+      .post(`/api/${process.env.API_VERSION}/users`)
+      .send({
+        username: 'dobby1',
+        email: 'dobby1@riddler.com',
+        password: '0lds0cks'
+      })
+
+    const user = res0.body.pkg
+
+    var res1 = await new MockHTTPServer()
+      .post(`/api/${process.env.API_VERSION}/groups/${group.id}/add/${user.id}`)
+      .send()
+
+    var res2 = await new MockHTTPServer()
+      .delete(`/api/${process.env.API_VERSION}/groups/${group.id}`)
+      .send()
+
+    var res3 = await new MockHTTPServer()
+      .get(`/api/${process.env.API_VERSION}/groups/of/users/${user.id}`)
+
+    const groups = res3.body.pkg
+
+    expect(groups.length == 0).to.be.true
+
+  })
+
 })

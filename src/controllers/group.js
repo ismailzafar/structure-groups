@@ -76,11 +76,31 @@ export default class GroupsController extends RootController {
 
   }
 
-  deleteById(req, res) {
+  async deleteById(req, res) {
 
     const group = new GroupModel()
 
-    return group.deleteById(req.params.id)
+    const groupId = req.params.id
+    const response = await group.getUsers(groupId)
+    const users = response.users || []
+
+    const removedUsers = []
+
+    for(let i = 0, l = users.length; i < l; i++) {
+      const user = users[i]
+
+      removedUsers.push(this.removeUser({
+        params: {
+          id: req.params.id,
+          userId: user.id
+        }
+      }))
+
+    }
+
+    return Promise
+      .all(removedUsers)
+      .then(group.deleteById(groupId))
 
   }
 
@@ -185,8 +205,6 @@ export default class GroupsController extends RootController {
 
     const group   = new GroupModel()
     const groupId = req.params.id
-    const pkg     = req.body || {}
-
     const userId  = req.params.userId
 
     return new Promise( async (resolve, reject) => {
@@ -204,7 +222,7 @@ export default class GroupsController extends RootController {
       resolve({
         groupId,
         removedUser: true,
-        userId: pkg.userId
+        userId
       })
 
     })
