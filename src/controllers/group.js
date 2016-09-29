@@ -160,6 +160,21 @@ export default class GroupsController extends RootController {
   }
 
   /**
+   * Get groups of a user
+   *
+   * @public
+   * @param {Object} req - Express req
+   * @param {Object} res - Express res
+   */
+  ofUser(req, res) {
+
+    const group = new GroupModel()
+
+    return group.ofUser(req.params.id)
+
+  }
+
+  /**
    * Remove a user from a group
    *
    * @public

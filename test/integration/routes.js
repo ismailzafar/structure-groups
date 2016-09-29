@@ -1,8 +1,8 @@
 import migrationItems from '../../src/migrations'
 import Migrations from 'structure-migrations'
 import MockHTTPServer from '../helpers/mock-http-server'
+import pluginsList from '../helpers/plugins'
 import r from '../helpers/driver'
-import {settings as userSettings} from 'structure-users'
 
 Migrations.prototype.r = r
 
@@ -12,9 +12,7 @@ describe('Groups', function() {
 
     this.migration = new Migrations({
       db: 'test',
-      items: {
-        tables: migrationItems.tables.concat(userSettings.migrations.tables)
-      }
+      plugins: pluginsList
     })
 
     return this.migration.process()
@@ -112,7 +110,7 @@ describe('Groups', function() {
         email: 'dobby1@riddler.com',
         password: '0lds0cks'
       })
-    console.error('')
+
     const user = res0.body.pkg
 
     var res1 = await new MockHTTPServer()
@@ -200,6 +198,39 @@ describe('Groups', function() {
 
     expect(group.title).to.equal('Marvolo All-Star Team 8')
     expect(group.users.length).to.equal(0)
+
+  })
+
+  it('should get groups of a user', async function() {
+
+    var res = await new MockHTTPServer()
+      .post(`/api/${process.env.API_VERSION}/groups`)
+      .send({
+        title: 'Marvolo All-Star Team 7'
+      })
+
+    let group = res.body.pkg
+
+    var res0 = await new MockHTTPServer()
+      .post(`/api/${process.env.API_VERSION}/users`)
+      .send({
+        username: 'dobby1',
+        email: 'dobby1@riddler.com',
+        password: '0lds0cks'
+      })
+
+    const user = res0.body.pkg
+
+    var res1 = await new MockHTTPServer()
+      .post(`/api/${process.env.API_VERSION}/groups/${group.id}/add/${user.id}`)
+      .send()
+
+    var res2 = await new MockHTTPServer()
+      .get(`/api/${process.env.API_VERSION}/groups/of/users/${user.id}`)
+
+    const groups = res2.body.pkg
+
+    expect(groups.length > 0).to.be.true
 
   })
 

@@ -6,6 +6,7 @@ const dispatch = new Dispatcher().dispatch
 const express = require('express')
 const routes = express.Router()
 
+routes.get('/of/users/:id',        dispatch(controller, 'ofUser'))
 routes.post(`/:id/add/:userId`,    dispatch(controller, 'addUser'))
 routes.post(`/:id/remove/:userId`, dispatch(controller, 'removeUser'))
 

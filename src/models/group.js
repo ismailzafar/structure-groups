@@ -250,4 +250,35 @@ export default class GroupModel extends RootModel {
 
   }
 
+  ofUser(id) {
+
+    return new Promise( async (resolve, reject) => {
+
+      let groups = []
+
+      try {
+
+        const res = await this.r
+          .table('users')
+          .getAll(id)
+          .eqJoin('id', this.r.table('link_groups_users'), {index: 'userId'})
+          .eqJoin(this.r.row('right')('groupId'), this.r.table('groups'), {index: 'id'})
+
+        for(let i = 0, l = res.length; i < l; i++) {
+          const group = res[i]
+
+          groups.push(group.right)
+        }
+
+        resolve(groups)
+
+      }
+      catch(e) {
+        reject(e)
+      }
+
+    })
+
+  }
+
 }
