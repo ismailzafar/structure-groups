@@ -11,10 +11,10 @@ export default function pluginInterface(options = {}) {
 
 const resources = {
   controllers: {
-    Application: Controller
+    Group: Controller
   },
   models: {
-    Application: Model
+    Group: Model
   }
 }
 
