@@ -20,6 +20,7 @@ routes.patch(`/:id`,               dispatch(controller, 'updateById'))
 
 routes.post(`/`,                   dispatch(controller, 'create'))
 
+routes.delete(`/:id/purge`,        dispatch(controller, 'purgeById'))
 routes.delete(`/:id`,              dispatch(controller, 'deleteById'))
 
 export default function routesHandler(options = {}) {

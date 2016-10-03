@@ -76,31 +76,20 @@ export default class GroupsController extends RootController {
 
   }
 
-  async deleteById(req, res) {
+  /**
+   * Delete a group by id
+   *
+   * @public
+   * @param {Object} req - Express req
+   * @param {Object} res - Express res
+   */
+  deleteById(req, res) {
 
     const group = new GroupModel()
 
     const groupId = req.params.id
-    const response = await group.getUsers(groupId)
-    const users = response.users || []
 
-    const removedUsers = []
-
-    for(let i = 0, l = users.length; i < l; i++) {
-      const user = users[i]
-
-      removedUsers.push(this.removeUser({
-        params: {
-          id: req.params.id,
-          userId: user.id
-        }
-      }))
-
-    }
-
-    return Promise
-      .all(removedUsers)
-      .then(group.deleteById(groupId))
+    return group.deleteById(groupId)
 
   }
 
@@ -191,6 +180,23 @@ export default class GroupsController extends RootController {
     const group = new GroupModel()
 
     return group.ofUser(req.params.id)
+
+  }
+
+  /**
+   * Purge a group by id
+   *
+   * @public
+   * @param {Object} req - Express req
+   * @param {Object} res - Express res
+   */
+  purgeById(req, res) {
+
+    const group = new GroupModel()
+
+    const groupId = req.params.id
+
+    return group.purgeById(groupId)
 
   }
 

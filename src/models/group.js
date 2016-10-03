@@ -84,6 +84,7 @@ export default class GroupModel extends RootModel {
 
      let data  = null
      let group = null
+     const state = ['active']
 
      const initGroupData = {
        leaders: []
@@ -96,6 +97,9 @@ export default class GroupModel extends RootModel {
          .getAll(id)
          .eqJoin('id', this.r.table('link_groups_users'), {index: 'groupId'})
          .eqJoin(this.r.row('right')('userId'), this.r.table('users'), {index: 'id'})
+         .filter( (doc) => {
+           return doc('right')('__state').eq('active')
+         })
 
        // The group has no members
        if(!data || data.length == 0) {
@@ -141,6 +145,7 @@ export default class GroupModel extends RootModel {
 
      let data  = null
      let group = null
+     const state = ['active']
 
      const initGroupData = {
        members: []
@@ -153,6 +158,9 @@ export default class GroupModel extends RootModel {
          .getAll(id)
          .eqJoin('id', this.r.table('link_groups_users'), {index: 'groupId'})
          .eqJoin(this.r.row('right')('userId'), this.r.table('users'), {index: 'id'})
+         .filter( (doc) => {
+           return doc('right')('__state').eq('active')
+         })
 
        // The group has no members
        if(!data || data.length == 0) {
@@ -198,6 +206,7 @@ export default class GroupModel extends RootModel {
 
       let data  = null
       let group = null
+      const state = ['active']
 
       const initGroupData = {
         leaders: [],
@@ -212,6 +221,9 @@ export default class GroupModel extends RootModel {
           .getAll(id)
           .eqJoin('id', this.r.table('link_groups_users'), {index: 'groupId'})
           .eqJoin(this.r.row('right')('userId'), this.r.table('users'), {index: 'id'})
+          .filter( (doc) => {
+            return doc('right')('__state').eq('active')
+          })
 
         // The group has no members
         if(!data || data.length == 0) {
