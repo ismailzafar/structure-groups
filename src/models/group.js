@@ -250,6 +250,11 @@ export default class GroupModel extends RootModel {
 
   }
 
+  /**
+   * Get groups of a user
+   *
+   * @param {String} id
+   */
   ofUser(id) {
 
     return new Promise( async (resolve, reject) => {
@@ -270,7 +275,7 @@ export default class GroupModel extends RootModel {
           groups.push(group.right)
         }
 
-        resolve(groups)
+        resolve({groups})
 
       }
       catch(e) {

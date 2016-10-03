@@ -228,13 +228,13 @@ describe('Groups', function() {
     var res2 = await new MockHTTPServer()
       .get(`/api/${process.env.API_VERSION}/groups/of/users/${user.id}`)
 
-    const groups = res2.body.pkg
+    const groups = res2.body.pkg.groups
 
     expect(groups.length > 0).to.be.true
 
   })
 
-  it.only('should remove a user from a group when deleting a group', async function() {
+  it('should remove a user from a group when deleting a group', async function() {
 
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
@@ -265,7 +265,7 @@ describe('Groups', function() {
     var res3 = await new MockHTTPServer()
       .get(`/api/${process.env.API_VERSION}/groups/of/users/${user.id}`)
 
-    const groups = res3.body.pkg
+    const groups = res3.body.pkg.groups
 
     expect(groups.length == 0).to.be.true
 

@@ -1,7 +1,7 @@
 {
   "name": "structure-groups",
-  "version": "0.0.7",
-  "description": "User groups, cause people like to be together.",
+  "version": "0.0.8",
+  "description": "User groups, cause people like to be together",
   "main": "dist/index.js",
   "dependencies": {
     "babel-runtime": "^6.11.6",
