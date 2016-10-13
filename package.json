@@ -1,12 +1,12 @@
 {
   "name": "structure-groups",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "User groups, cause people like to be together",
   "main": "dist/index.js",
   "dependencies": {
     "babel-runtime": "^6.11.6",
     "express": "^4.14.0",
-    "structure-dispatcher": "0.0.7",
+    "structure-dispatcher": "0.0.21",
     "structure-root-controller": "0.0.3",
     "structure-root-model": "0.0.9"
   },
@@ -32,12 +32,13 @@
     "rethinkdbdash": "^2.3.23",
     "sinon": "^1.17.5",
     "sinon-chai": "^2.8.0",
-    "structure-migrations": "0.0.7",
-    "structure-plugins": "0.0.21",
-    "structure-router": "0.0.3",
-    "structure-server": "0.0.6",
+    "structure-migrations": "0.0.9",
+    "structure-organizations": "0.0.12",
+    "structure-plugins": "0.0.24",
+    "structure-router": "0.0.7",
+    "structure-server": "0.0.10",
     "structure-test-helpers": "0.0.3",
-    "structure-users": "0.0.10",
+    "structure-users": "0.0.17",
     "supertest": "^2.0.0",
     "supertest-as-promised": "^4.0.0"
   },

@@ -5,6 +5,7 @@ import pluginsList from '../helpers/plugins'
 import r from '../helpers/driver'
 
 Migrations.prototype.r = r
+const server = new MockHTTPServer()
 
 describe('Groups', function() {
 
@@ -143,7 +144,15 @@ describe('Groups', function() {
 
   it('should add a group member', async function() {
 
-    var res = await new MockHTTPServer()
+    const orgRes = await server
+      .post(`/api/${process.env.API_VERSION}/organizations`)
+      .send({
+        title: "Deathly Cannons"
+      })
+
+    const org = orgRes.body.pkg
+
+    var res = await server
       .post(`/api/${process.env.API_VERSION}/groups`)
       .send({
         title: 'Marvolo All-Star Team 6'
@@ -151,9 +160,10 @@ describe('Groups', function() {
 
     let group = res.body.pkg
 
-    var res0 = await new MockHTTPServer()
+    var res0 = await server
       .post(`/api/${process.env.API_VERSION}/users`)
       .send({
+        organizationId: org.id,
         username: 'dobby1',
         email: 'dobby1@riddler.com',
         password: '0lds0cks'
@@ -177,6 +187,14 @@ describe('Groups', function() {
 
   it('should add a group leader', async function() {
 
+    const orgRes = await server
+      .post(`/api/${process.env.API_VERSION}/organizations`)
+      .send({
+        title: "Deathly Cannons"
+      })
+
+    const org = orgRes.body.pkg
+
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
       .send({
@@ -188,6 +206,7 @@ describe('Groups', function() {
     var res0 = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/users`)
       .send({
+        organizationId: org.id,
         username: 'dobby2',
         email: 'dobby2@riddler.com',
         password: '0lds0cks'
@@ -213,6 +232,14 @@ describe('Groups', function() {
 
   it('should remove a group member', async function() {
 
+    const orgRes = await server
+      .post(`/api/${process.env.API_VERSION}/organizations`)
+      .send({
+        title: "Deathly Cannons"
+      })
+
+    const org = orgRes.body.pkg
+
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
       .send({
@@ -224,6 +251,7 @@ describe('Groups', function() {
     var res0 = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/users`)
       .send({
+        organizationId: org.id,
         username: 'dobby1',
         email: 'dobby1@riddler.com',
         password: '0lds0cks'
@@ -251,6 +279,14 @@ describe('Groups', function() {
 
   it('should get groups of a user', async function() {
 
+    const orgRes = await server
+      .post(`/api/${process.env.API_VERSION}/organizations`)
+      .send({
+        title: "Deathly Cannons"
+      })
+
+    const org = orgRes.body.pkg
+
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
       .send({
@@ -262,6 +298,7 @@ describe('Groups', function() {
     var res0 = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/users`)
       .send({
+        organizationId: org.id,
         username: 'dobby1',
         email: 'dobby1@riddler.com',
         password: '0lds0cks'
@@ -289,7 +326,13 @@ describe('Groups', function() {
   */
   it('should remove a user from a group when deleting a group', async function() {
 
-    const server = new MockHTTPServer()
+    const orgRes = await server
+      .post(`/api/${process.env.API_VERSION}/organizations`)
+      .send({
+        title: "Deathly Cannons"
+      })
+
+    const org = orgRes.body.pkg
     const version = process.env.API_VERSION
 
     var res = await server
@@ -311,6 +354,7 @@ describe('Groups', function() {
     var res0 = await server
       .post(`/api/${version}/users`)
       .send({
+        organizationId: org.id,
         username: 'dobby1',
         email: 'dobby1@riddler.com',
         password: '0lds0cks'
@@ -319,6 +363,7 @@ describe('Groups', function() {
     var res1 = await server
       .post(`/api/${version}/users`)
       .send({
+        organizationId: org.id,
         username: 'dobby2',
         email: 'dobby2@riddler.com',
         password: '0lds0cks'
