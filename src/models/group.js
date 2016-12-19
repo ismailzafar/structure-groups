@@ -1,3 +1,5 @@
+import logger from 'structure-logger'
+import r from 'structure-driver'
 import RootModel from 'structure-root-model'
 
 /**
@@ -19,13 +21,6 @@ export default class GroupModel extends RootModel {
    super(Object.assign({}, {
      table: 'groups',
 
-     permissions: {
-       create:  ['admin'],
-       delete:  ['admin'],
-       read:    ['organization'],
-       replace: ['admin'],
-       update:  ['admin'],
-     },
      relations: {
        belongsTo: [
          {
@@ -73,6 +68,42 @@ export default class GroupModel extends RootModel {
 
  }
 
+ getAll(ids = [], options = {}) {
+
+   return new Promise( async (resolve, reject) => {
+
+     try {
+
+       let query = r
+         .table(this.table)
+
+        if(ids.length > 0) {
+
+          query = query
+            .getAll(r.args(ids))
+
+        }
+
+        query = query
+          .filter( (doc) => {
+            return doc('status').eq('active')
+          })
+
+        const res = await query.run()
+
+        resolve(res)
+
+     }
+     catch(e) {
+       logger.error(e)
+
+       reject(e)
+     }
+
+   })
+
+ }
+
  /**
   * Get leaders of a group
   *
@@ -84,7 +115,7 @@ export default class GroupModel extends RootModel {
 
      let data  = null
      let group = null
-     const state = ['active']
+     const status = ['active']
 
      const initGroupData = {
        leaders: []
@@ -92,13 +123,13 @@ export default class GroupModel extends RootModel {
 
      try {
 
-       data = await this.r
+       data = await r
          .table('groups')
          .getAll(id)
-         .eqJoin('id', this.r.table('link_groups_users'), {index: 'groupId'})
-         .eqJoin(this.r.row('right')('userId'), this.r.table('users'), {index: 'id'})
+         .eqJoin('id', r.table('link_groups_users'), {index: 'groupId'})
+         .eqJoin(r.row('right')('userId'), r.table('users'), {index: 'id'})
          .filter( (doc) => {
-           return doc('right')('__state').eq('active')
+           return doc('right')('status').eq('active')
          })
 
        // The group has no members
@@ -145,7 +176,7 @@ export default class GroupModel extends RootModel {
 
      let data  = null
      let group = null
-     const state = ['active']
+     const status = ['active']
 
      const initGroupData = {
        members: []
@@ -153,13 +184,13 @@ export default class GroupModel extends RootModel {
 
      try {
 
-       data = await this.r
+       data = await r
          .table('groups')
          .getAll(id)
-         .eqJoin('id', this.r.table('link_groups_users'), {index: 'groupId'})
-         .eqJoin(this.r.row('right')('userId'), this.r.table('users'), {index: 'id'})
+         .eqJoin('id', r.table('link_groups_users'), {index: 'groupId'})
+         .eqJoin(r.row('right')('userId'), r.table('users'), {index: 'id'})
          .filter( (doc) => {
-           return doc('right')('__state').eq('active')
+           return doc('right')('status').eq('active')
          })
 
        // The group has no members
@@ -206,7 +237,7 @@ export default class GroupModel extends RootModel {
 
       let data  = null
       let group = null
-      const state = ['active']
+      const status = ['active']
 
       const initGroupData = {
         leaders: [],
@@ -216,13 +247,13 @@ export default class GroupModel extends RootModel {
 
       try {
 
-        data = await this.r
+        data = await r
           .table('groups')
           .getAll(id)
-          .eqJoin('id', this.r.table('link_groups_users'), {index: 'groupId'})
-          .eqJoin(this.r.row('right')('userId'), this.r.table('users'), {index: 'id'})
+          .eqJoin('id', r.table('link_groups_users'), {index: 'groupId'})
+          .eqJoin(r.row('right')('userId'), r.table('users'), {index: 'id'})
           .filter( (doc) => {
-            return doc('right')('__state').eq('active')
+            return doc('right')('status').eq('active')
           })
 
         // The group has no members
@@ -275,11 +306,11 @@ export default class GroupModel extends RootModel {
 
       try {
 
-        const res = await this.r
+        const res = await r
           .table('users')
           .getAll(id)
-          .eqJoin('id', this.r.table('link_groups_users'), {index: 'userId'})
-          .eqJoin(this.r.row('right')('groupId'), this.r.table('groups'), {index: 'id'})
+          .eqJoin('id', r.table('link_groups_users'), {index: 'userId'})
+          .eqJoin(r.row('right')('groupId'), r.table('groups'), {index: 'id'})
 
         for(let i = 0, l = res.length; i < l; i++) {
           const group = res[i]

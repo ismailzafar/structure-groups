@@ -71,8 +71,11 @@ export default class GroupsController extends RootController {
   create(req, res) {
 
     const group = new GroupModel()
+    const pkg = req.body
 
-    return group.create(req.body)
+    pkg.status = 'active'
+
+    return group.create(pkg)
 
   }
 
@@ -90,6 +93,23 @@ export default class GroupsController extends RootController {
     const groupId = req.params.id
 
     return group.deleteById(groupId)
+
+  }
+
+  /**
+   * Destroy a group by id
+   *
+   * @public
+   * @param {Object} req - Express req
+   * @param {Object} res - Express res
+   */
+  destroyById(req, res) {
+
+    const group = new GroupModel()
+
+    const groupId = req.params.id
+
+    return group.destroyById(groupId)
 
   }
 
@@ -180,23 +200,6 @@ export default class GroupsController extends RootController {
     const group = new GroupModel()
 
     return group.ofUser(req.params.id)
-
-  }
-
-  /**
-   * Purge a group by id
-   *
-   * @public
-   * @param {Object} req - Express req
-   * @param {Object} res - Express res
-   */
-  purgeById(req, res) {
-
-    const group = new GroupModel()
-
-    const groupId = req.params.id
-
-    return group.purgeById(groupId)
 
   }
 

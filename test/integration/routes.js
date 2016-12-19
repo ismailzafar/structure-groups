@@ -2,9 +2,7 @@ import migrationItems from '../../src/migrations'
 import Migrations from 'structure-migrations'
 import MockHTTPServer from '../helpers/mock-http-server'
 import pluginsList from '../helpers/plugins'
-import r from '../helpers/driver'
 
-Migrations.prototype.r = r
 const server = new MockHTTPServer()
 
 describe('Groups', function() {
@@ -69,7 +67,6 @@ describe('Groups', function() {
       .get(`/api/${process.env.API_VERSION}/groups`)
 
     const groups = res2.body.pkg.groups
-
     expect(groups.length > 0).to.be.true
 
   })
@@ -118,7 +115,7 @@ describe('Groups', function() {
 
   })
 
-  it('should purge a group', async function() {
+  it('should destroy a group', async function() {
 
     const server = new MockHTTPServer()
 
@@ -131,7 +128,7 @@ describe('Groups', function() {
     const group = res.body.pkg
 
     var res1 = await server
-      .delete(`/api/${process.env.API_VERSION}/groups/${group.id}/purge`)
+      .delete(`/api/${process.env.API_VERSION}/groups/${group.id}/destroy`)
 
     var res2 = await server
       .get(`/api/${process.env.API_VERSION}/groups`)
