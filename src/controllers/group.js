@@ -73,6 +73,10 @@ export default class GroupsController extends RootController {
     const group = new GroupModel()
     const pkg = req.body
 
+    if(!pkg.organizationId) {
+      pkg.organizationId = req.headers.organizationid
+    }
+
     pkg.status = 'active'
 
     return group.create(pkg)
@@ -124,7 +128,10 @@ export default class GroupsController extends RootController {
 
     const group = new GroupModel()
 
-    return group.getAll()
+    return group.getAll([], {
+      applicationId: req.headers.applicationid,
+      organizationId: req.headers.organizationid
+    })
 
   }
 

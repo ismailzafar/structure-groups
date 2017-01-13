@@ -5,6 +5,31 @@ import pluginsList from '../helpers/plugins'
 
 const server = new MockHTTPServer()
 
+const createOrgAndApp = async function(){
+  // getting an organization and application Ids
+  var res0 = await new MockHTTPServer()
+    .post(`/api/${process.env.API_VERSION}/organizations`)
+    .send({
+      title: 'work it'
+    })
+
+  const org = res0.body.pkg
+  const orgId = org.id
+
+  var app = await new MockHTTPServer()
+    .post(`/api/${process.env.API_VERSION}/applications`)
+    .set('organizationid', orgId)
+    .send({
+      desc: '',
+      title: 'App 45'
+    })
+
+  const appId = app.body.pkg.id
+
+  return {orgId, appId}
+
+}
+
 describe('Groups', function() {
 
   beforeEach(function() {
@@ -24,8 +49,12 @@ describe('Groups', function() {
 
   it('should create an group', async function() {
 
+    const {orgId, appId} = await createOrgAndApp()
+
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: 'Marvolo All-Star Team 1'
       })
@@ -39,14 +68,20 @@ describe('Groups', function() {
 
   it('should get by a group by Id', async function() {
 
+    const {orgId, appId} = await createOrgAndApp()
+
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: 'Marvolo All-Star Team 2'
       })
 
     var res2 = await new MockHTTPServer()
       .get(`/api/${process.env.API_VERSION}/groups/${res.body.pkg.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
 
     const group = res2.body.pkg
 
@@ -57,14 +92,20 @@ describe('Groups', function() {
 
   it('should get all groups', async function() {
 
+    const {orgId, appId} = await createOrgAndApp()
+
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: 'Marvolo All-Star Team 3'
       })
 
     var res2 = await new MockHTTPServer()
       .get(`/api/${process.env.API_VERSION}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
 
     const groups = res2.body.pkg.groups
     expect(groups.length > 0).to.be.true
@@ -73,14 +114,20 @@ describe('Groups', function() {
 
   it('should update a group', async function() {
 
+    const {orgId, appId} = await createOrgAndApp()
+
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: 'Marvolo All-Star Team 4'
       })
 
     var res2 = await new MockHTTPServer()
       .patch(`/api/${process.env.API_VERSION}/groups/${res.body.pkg.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: 'Marvolo All-Star Team 5'
       })
@@ -93,10 +140,14 @@ describe('Groups', function() {
 
   it('should delete a group', async function() {
 
+    const {orgId, appId} = await createOrgAndApp()
+
     const server = new MockHTTPServer()
 
     var res = await server
       .post(`/api/${process.env.API_VERSION}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: 'Marvolo All-Star Team 3'
       })
@@ -105,9 +156,13 @@ describe('Groups', function() {
 
     var res1 = await server
       .delete(`/api/${process.env.API_VERSION}/groups/${group.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
 
     var res2 = await server
       .get(`/api/${process.env.API_VERSION}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
 
     const groups = res2.body.pkg.groups
 
@@ -117,10 +172,14 @@ describe('Groups', function() {
 
   it('should destroy a group', async function() {
 
+    const {orgId, appId} = await createOrgAndApp()
+
     const server = new MockHTTPServer()
 
     var res = await server
       .post(`/api/${process.env.API_VERSION}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: 'Marvolo All-Star Team 3'
       })
@@ -129,9 +188,13 @@ describe('Groups', function() {
 
     var res1 = await server
       .delete(`/api/${process.env.API_VERSION}/groups/${group.id}/destroy`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
 
     var res2 = await server
       .get(`/api/${process.env.API_VERSION}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
 
     const groups = res2.body.pkg.groups
 
@@ -141,8 +204,12 @@ describe('Groups', function() {
 
   it('should add a group member', async function() {
 
+    const {orgId, appId} = await createOrgAndApp()
+
     const orgRes = await server
       .post(`/api/${process.env.API_VERSION}/organizations`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: "Deathly Cannons"
       })
@@ -151,6 +218,8 @@ describe('Groups', function() {
 
     var res = await server
       .post(`/api/${process.env.API_VERSION}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: 'Marvolo All-Star Team 6'
       })
@@ -159,6 +228,8 @@ describe('Groups', function() {
 
     var res0 = await server
       .post(`/api/${process.env.API_VERSION}/users`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         organizationId: org.id,
         username: 'dobby1',
@@ -170,10 +241,14 @@ describe('Groups', function() {
 
     var res1 = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups/${group.id}/add/${user.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send()
 
     var res2 = await new MockHTTPServer()
       .get(`/api/${process.env.API_VERSION}/groups/${group.id}/members`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
 
     group = res2.body.pkg
 
@@ -184,8 +259,12 @@ describe('Groups', function() {
 
   it('should add a group leader', async function() {
 
+    const {orgId, appId} = await createOrgAndApp()
+
     const orgRes = await server
       .post(`/api/${process.env.API_VERSION}/organizations`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: "Deathly Cannons"
       })
@@ -194,6 +273,8 @@ describe('Groups', function() {
 
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: 'Marvolo All-Star Team 7'
       })
@@ -202,6 +283,8 @@ describe('Groups', function() {
 
     var res0 = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/users`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         organizationId: org.id,
         username: 'dobby2',
@@ -213,12 +296,16 @@ describe('Groups', function() {
 
     var res1 = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups/${group.id}/add/${user.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         leader: true
       })
 
     var res2 = await new MockHTTPServer()
       .get(`/api/${process.env.API_VERSION}/groups/${group.id}/leaders`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
 
     group = res2.body.pkg
 
@@ -229,8 +316,12 @@ describe('Groups', function() {
 
   it('should remove a group member', async function() {
 
+    const {orgId, appId} = await createOrgAndApp()
+
     const orgRes = await server
       .post(`/api/${process.env.API_VERSION}/organizations`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: "Deathly Cannons"
       })
@@ -239,6 +330,8 @@ describe('Groups', function() {
 
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: 'Marvolo All-Star Team 8'
       })
@@ -247,6 +340,8 @@ describe('Groups', function() {
 
     var res0 = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/users`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         organizationId: org.id,
         username: 'dobby1',
@@ -258,14 +353,20 @@ describe('Groups', function() {
 
     var res1 = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups/${group.id}/add/${user.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send()
 
     var res2 = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups/${group.id}/remove/${user.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send()
 
     var res3 = await new MockHTTPServer()
       .get(`/api/${process.env.API_VERSION}/groups/${group.id}/users`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
 
     group = res3.body.pkg
 
@@ -276,8 +377,12 @@ describe('Groups', function() {
 
   it('should get groups of a user', async function() {
 
+    const {orgId, appId} = await createOrgAndApp()
+
     const orgRes = await server
       .post(`/api/${process.env.API_VERSION}/organizations`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: "Deathly Cannons"
       })
@@ -286,6 +391,8 @@ describe('Groups', function() {
 
     var res = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: 'Marvolo All-Star Team 7'
       })
@@ -294,6 +401,8 @@ describe('Groups', function() {
 
     var res0 = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/users`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         organizationId: org.id,
         username: 'dobby1',
@@ -305,10 +414,14 @@ describe('Groups', function() {
 
     var res1 = await new MockHTTPServer()
       .post(`/api/${process.env.API_VERSION}/groups/${group.id}/add/${user.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send()
 
     var res2 = await new MockHTTPServer()
       .get(`/api/${process.env.API_VERSION}/groups/of/users/${user.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
 
     const groups = res2.body.pkg.groups
 
@@ -323,8 +436,12 @@ describe('Groups', function() {
   */
   it('should remove a user from a group when deleting a group', async function() {
 
+    const {orgId, appId} = await createOrgAndApp()
+
     const orgRes = await server
       .post(`/api/${process.env.API_VERSION}/organizations`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: "Deathly Cannons"
       })
@@ -334,6 +451,8 @@ describe('Groups', function() {
 
     var res = await server
       .post(`/api/${version}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: 'Marvolo All-Star Team 8'
       })
@@ -342,6 +461,8 @@ describe('Groups', function() {
 
     var resG = await server
       .post(`/api/${version}/groups`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         title: 'Marvolo All-Star Team 9'
       })
@@ -350,6 +471,8 @@ describe('Groups', function() {
 
     var res0 = await server
       .post(`/api/${version}/users`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         organizationId: org.id,
         username: 'dobby1',
@@ -359,6 +482,8 @@ describe('Groups', function() {
 
     var res1 = await server
       .post(`/api/${version}/users`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send({
         organizationId: org.id,
         username: 'dobby2',
@@ -371,25 +496,37 @@ describe('Groups', function() {
 
     var res1a = await server
       .post(`/api/${version}/groups/${group1.id}/add/${user1.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send()
 
     var res1b = await server
       .post(`/api/${version}/groups/${group1.id}/add/${user2.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send()
 
     var res1c = await server
       .post(`/api/${version}/groups/${group2.id}/add/${user2.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send()
 
     var res2 = await server
       .delete(`/api/${version}/groups/${group1.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
       .send()
 
     var res3 = await server
       .get(`/api/${version}/groups/of/users/${user1.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
 
     var res4 = await server
       .get(`/api/${version}/groups/of/users/${user2.id}`)
+      .set('organizationid', orgId)
+      .set('applicationid', appId)
 
     const groups1 = res3.body.pkg.groups
     const groups2 = res4.body.pkg.groups

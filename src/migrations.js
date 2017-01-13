@@ -20,20 +20,6 @@ export default {
           indexes: ['groupId', 'userId']
         }
       ]
-    },
-    {
-      action: 'create',
-      table: 'link_organizations_groups',
-      indexes: [
-        'organizationId',
-        'groupId'
-      ],
-      compoundIndexes: [
-        {
-          name: 'link_organization_group',
-          indexes: ['organizationId', 'groupId']
-        }
-      ]
-    },
+    }
   ]
 }

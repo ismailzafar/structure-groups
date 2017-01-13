@@ -22,16 +22,6 @@ export default class GroupModel extends RootModel {
      table: 'groups',
 
      relations: {
-       belongsTo: [
-         {
-           node: 'organizations',
-           link: {
-             foreignKey: 'organizationId',
-             localKey: 'groupId'
-           },
-           joinTable: 'link_organizations_groups'
-         }
-       ],
        hasMany: [
          {
            node: 'users',
@@ -70,6 +60,8 @@ export default class GroupModel extends RootModel {
 
  getAll(ids = [], options = {}) {
 
+   const organizationId = options.organizationId
+
    return new Promise( async (resolve, reject) => {
 
      try {
@@ -81,6 +73,12 @@ export default class GroupModel extends RootModel {
 
           query = query
             .getAll(r.args(ids))
+
+        }
+        else {
+
+          query = query
+            .getAll(organizationId, {index: 'organizationId'})
 
         }
 
